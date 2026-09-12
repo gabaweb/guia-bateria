@@ -19,7 +19,8 @@ function StorageAlert() {
     </Block>
   );
 }
-// Tab pages render inside MainTabs, which owns the Navbar and the tab bar.
+// Tab pages render inside MainTabs, which owns the Navbar and the tab bar;
+// their heading is plain content that scrolls away, with no collapse.
 // Subpages get the standard Framework7 page: fixed Navbar, optional bottom
 // Toolbar for actions, and PageContent scrolling underneath both.
 export function Shell({
@@ -45,6 +46,16 @@ export function Shell({
     return (
       <main className="content-wrap">
         <StorageAlert />
+        {title && (
+          <BlockTitle
+            large
+            className="tab-title"
+            {...{ role: "heading" }}
+            aria-level={1}
+          >
+            {title}
+          </BlockTitle>
+        )}
         {children}
       </main>
     );

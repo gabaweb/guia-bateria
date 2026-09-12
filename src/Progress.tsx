@@ -23,7 +23,7 @@ export function Progress() {
     { label: "Para depois", value: laterCount, tone: "later" },
   ];
   return (
-    <Shell name="progress">
+    <Shell name="progress" title="Progresso">
       <Block className="page-description">
         Suas marcações para o {model.name}. Elas ficam salvas neste navegador e
         não alteram os Ajustes do iPhone.

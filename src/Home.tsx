@@ -6,7 +6,7 @@ import { TipList } from "./components/TipList";
 export function Home() {
   const { model, available } = useGuide();
   return (
-    <Shell name="home">
+    <Shell name="home" title="Guia Bateria">
       <Block className="page-description">
         Pequenos ajustes do iOS 26 para o seu iPhone ir mais longe. Abra uma
         dica, siga o caminho e marque o que fizer sentido para você.

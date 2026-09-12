@@ -32,7 +32,7 @@ export function About() {
     ...new Map(tips.flatMap((t) => t.sources).map((s) => [s.url, s])).values(),
   ];
   return (
-    <Shell name="about">
+    <Shell name="about" title="Sobre">
       <Block className="page-description">
         Um guia independente para você entender e revisar os ajustes do iOS 26.
         Escolha seu modelo, leia as dicas e mantenha o que faz sentido para

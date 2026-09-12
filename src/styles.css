@@ -362,19 +362,12 @@ body,
   width: 100%;
   margin-top: 8px;
 }
-/* Tab pages: only the large title, no small collapsed title and no bar
-   backdrop. The title scrolls away with the content like iOS 26. */
+/* Tab pages: the navbar is only a thin strip that fades the status bar; the
+   heading is plain content that scrolls away with the page. */
 .main-tabs-page {
-  --f7-navbar-height: 44px;
-  --f7-navbar-large-title-padding-vertical: 2px;
+  --f7-navbar-height: 12px;
   --f7-tabbar-icons-height: calc(64px + var(--guide-tabbar-gap));
-  --guide-tabbar-gap: max(8px, calc(var(--guide-safe-bottom) * 0.6));
 }
-.main-tabs-page .navbar .title {
-  display: none;
-}
-/* Only a plain fade over the status bar so text does not run into the
-   clock; it is fully transparent below the safe area. */
 .main-tabs-page .navbar {
   --f7-navbar-bg-color: #000;
 }
@@ -388,36 +381,50 @@ body,
     transparent calc(var(--f7-safe-area-top, 0px) + 28px)
   );
 }
-.ios .main-tabs-page .navbar-inner {
-  padding-top: calc(4px + var(--f7-safe-area-top));
-  padding-bottom: 4px;
+.tab-title {
+  margin-top: 34px;
+  margin-bottom: 8px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 /* No blur behind any bar; subpage bars keep only their plain fade. */
 .ios .navbar-bg::before,
 .ios .toolbar::before {
   display: none;
 }
-/* Floating tab bar: no backdrop band, content shows through, and the pill
-   sits down by the home indicator (inside the safe area) as in iOS 26. */
+/* Floating tab bar: no backdrop band, content shows through. In a browser
+   the pill sits 8px above the browser's own bottom bar (the safe area). */
 .ios .main-navigation::before,
 .ios .main-navigation::after {
   display: none;
 }
-.main-navigation {
-  --f7-safe-area-bottom: 0px;
+.main-tabs-page {
+  --guide-tabbar-gap: 8px;
 }
 .ios .main-navigation.toolbar-bottom .toolbar-inner {
   padding-bottom: var(--guide-tabbar-gap);
 }
 .guide-page {
+  --guide-safe-top: var(--f7-safe-area-top);
   --guide-safe-bottom: var(--f7-safe-area-bottom);
 }
-/* The tab bar already accounts for the safe area, so the scroller's bottom
-   padding must not add it again. */
-.main-tabs-page .page-content {
-  --f7-safe-area-bottom: 0px;
-}
-/* Large navbar titles wrap on narrow phones instead of clipping. */
-.navbar .title-large-text {
-  white-space: normal;
+/* Installed web app: the pill drops into the safe area next to the home
+   indicator, and the scroller is inset by the status bar and the home
+   indicator so its scroll indicator stops before the rounded corners. */
+@media (display-mode: standalone) {
+  .main-tabs-page {
+    --guide-tabbar-gap: max(8px, calc(var(--guide-safe-bottom) * 0.6));
+  }
+  .main-navigation {
+    --f7-safe-area-bottom: 0px;
+  }
+  .guide-page .page-content {
+    --f7-safe-area-top: 0px;
+    --f7-safe-area-bottom: 0px;
+    --f7-page-navbar-offset: var(--f7-navbar-height);
+    margin-top: var(--guide-safe-top);
+    height: calc(100% - var(--guide-safe-top) - var(--guide-safe-bottom));
+  }
 }
