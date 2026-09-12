@@ -6,12 +6,12 @@ import {
   Block,
   BlockTitle,
   BlockFooter,
-  Icon,
 } from "framework7-react";
 import type { Router } from "framework7/types";
 import { models } from "./data/models";
 import { useGuide } from "./state";
 import { Shell, PageHeading } from "./components/Shell";
+import { Path } from "./Detail";
 export function ModelPicker({ f7router }: { f7router: Router.Router }) {
   const { model, saved, selectModel } = useGuide();
   const [chosen, setChosen] = useState(saved.selected ? model.id : "");
@@ -46,18 +46,13 @@ export function ModelPicker({ f7router }: { f7router: Router.Router }) {
         title="Qual é o seu iPhone?"
         description="As dicas e os caminhos se adaptam ao seu modelo."
       />
-      <Block className="notice" strong inset>
-        <Icon
-          f7="info_circle_fill"
-          size={22}
-          textColor="blue"
-          aria-hidden="true"
-        />
-        <div>
-          <strong>Não sabe o modelo?</strong>
-          <p>Abra Ajustes › Geral › Sobre e confira Nome do Modelo.</p>
-        </div>
-      </Block>
+      <BlockTitle {...{ role: "heading" }} aria-level={2}>
+        Não sabe o modelo?
+      </BlockTitle>
+      <Path items={["Ajustes", "Geral", "Sobre", "Nome do Modelo"]} />
+      <BlockFooter>
+        Abra esse caminho no iPhone e confira o nome exibido.
+      </BlockFooter>
       {[...new Set(models.map((m) => m.family))].map((family) => (
         <div key={family} className="model-family">
           <BlockTitle {...{ role: "heading" }} aria-level={2}>

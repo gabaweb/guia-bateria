@@ -268,15 +268,6 @@ body,
   margin: 0;
   line-height: 1.5;
 }
-.notice {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-.notice p {
-  margin: 4px 0 0;
-  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
-}
 /* External links show the outward arrow instead of the disclosure chevron. */
 .item-link[target="_blank"] .item-inner::before {
   display: none;
