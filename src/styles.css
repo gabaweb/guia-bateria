@@ -224,9 +224,6 @@ body,
 .tip-list .item-subtitle {
   line-height: 1;
 }
-.tip-list .status-completed .item-title {
-  color: var(--f7-list-item-subtitle-text-color, rgba(255, 255, 255, 0.55));
-}
 /* Tip header: hero icon, category, title and subtitle centered like iOS
    feature intro screens. */
 .tip-hero {
