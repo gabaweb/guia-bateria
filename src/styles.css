@@ -71,14 +71,19 @@ body,
 /* Use Framework7 typography tokens while allowing long Settings paths to wrap. */
 .settings-path {
   --f7-block-font-size: 17px;
-  line-height: 1.7;
+  line-height: 2.1;
 }
 .settings-path strong {
   display: inline-block;
-  padding: 1px 8px;
+  padding: 2px 8px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
   font-weight: 600;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+.settings-path .icon {
+  vertical-align: middle;
 }
 /* Text alternatives for live status without duplicating visual content. */
 .visually-hidden {
