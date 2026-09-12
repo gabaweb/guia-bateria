@@ -362,6 +362,31 @@ body,
   width: 100%;
   margin-top: 8px;
 }
+/* Tab pages have no navbar pills, so the small bar is shorter and the large
+   title sits where iOS puts it. Subpages keep the 64px bar for the back pill. */
+.main-tabs-page {
+  --f7-navbar-height: 48px;
+  --f7-navbar-large-title-padding-vertical: 2px;
+  --f7-tabbar-icons-height: calc(64px + var(--guide-tabbar-gap));
+  --guide-tabbar-gap: max(6px, calc(18px - var(--f7-safe-area-bottom) / 2));
+}
+.ios .main-tabs-page .navbar-inner {
+  padding-top: calc(6px + var(--f7-safe-area-top));
+  padding-bottom: 6px;
+}
+/* The floating tab bar hugs the home indicator instead of hovering above it. */
+.ios .main-navigation.toolbar-bottom .toolbar-inner {
+  padding-bottom: var(--guide-tabbar-gap);
+}
+/* Touch devices: no persistent scrollbar running past the rounded corners. */
+@media (pointer: coarse) {
+  .page-content {
+    scrollbar-width: none;
+  }
+  .page-content::-webkit-scrollbar {
+    display: none;
+  }
+}
 /* Large navbar titles wrap on narrow phones instead of clipping. */
 .navbar .title-large-text {
   white-space: normal;
