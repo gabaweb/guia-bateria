@@ -370,9 +370,23 @@ body,
   --f7-tabbar-icons-height: calc(64px + var(--guide-tabbar-gap));
   --guide-tabbar-gap: max(8px, calc(var(--guide-safe-bottom) * 0.6));
 }
-.main-tabs-page .navbar .navbar-bg,
 .main-tabs-page .navbar .title {
   display: none;
+}
+/* Only a plain fade over the status bar so text does not run into the
+   clock; it is fully transparent below the safe area. */
+.main-tabs-page .navbar {
+  --f7-navbar-bg-color: #000;
+}
+.main-tabs-page .navbar .navbar-bg {
+  pointer-events: none;
+}
+.ios .main-tabs-page .navbar-bg::after {
+  background-image: linear-gradient(
+    to bottom,
+    var(--f7-navbar-bg-color) var(--f7-safe-area-top, 0px),
+    transparent calc(var(--f7-safe-area-top, 0px) + 28px)
+  );
 }
 .ios .main-tabs-page .navbar-inner {
   padding-top: calc(4px + var(--f7-safe-area-top));
