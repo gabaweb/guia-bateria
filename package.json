@@ -1,0 +1,40 @@
+{
+  "name": "guia-bateria",
+  "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://guia-bateria.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gabaweb/guia-bateria.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gabaweb/guia-bateria/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "node scripts/generate-icons.mjs && tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "framework7": "^9.0.0",
+    "framework7-icons": "^5.0.5",
+    "framework7-react": "^9.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.4.0",
+    "sharp": "^0.35.4",
+    "tsx": "^4.19.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0",
+    "vite-plugin-pwa": "^1.0.0"
+  }
+}

@@ -1,0 +1,97 @@
+/* Settings-style tiles use the native Icon and Framework7 color utilities. */
+.icon.settings-icon {
+  box-sizing: content-box;
+  padding: 5px;
+  border-radius: 7px;
+}
+/* Override Framework7's i.icon background sizing; this glyph needs an optical inset. */
+.settings-icon.icon-accessibility {
+  background-image: url("./assets/accessibility.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+}
+/* Framework7 owns all component styling. Only the app frame is constrained here.
+   Keep the actual scrollport inside the iOS safe area, not merely its content. */
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.guide-page {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding-bottom: var(--f7-safe-area-bottom);
+}
+.guide-page > .navbar {
+  position: relative;
+  grid-row: 1;
+}
+.guide-page > .page-content {
+  grid-row: 2;
+  min-height: 0;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  margin-left: var(--f7-safe-area-left);
+  margin-right: var(--f7-safe-area-right);
+}
+.content-wrap {
+  --f7-block-title-white-space: normal;
+  --f7-list-item-title-white-space: normal;
+  --f7-list-item-text-max-lines: none;
+  --f7-safe-area-left: 0px;
+  --f7-safe-area-right: 0px;
+  width: min(100%, 720px);
+  margin-inline: auto;
+}
+/* Use Framework7 typography tokens while allowing long Settings paths to wrap. */
+.settings-path {
+  --f7-block-font-size: 17px;
+  line-height: 1.6;
+}
+.page-actions {
+  grid-row: 3;
+  min-width: 0;
+  margin-left: var(--f7-safe-area-left);
+  margin-right: var(--f7-safe-area-right);
+}
+.page-actions > .content-wrap {
+  box-sizing: border-box;
+  padding: 8px 16px;
+}
+.guide-page > .navbar .navbar-inner {
+  max-width: 720px;
+  inset-inline: 0;
+  margin-inline: auto;
+}
+/* Text alternatives for live status without duplicating visual content. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* Native scrollable tabs keep their DOM and independent scroll positions. */
+.main-tabs-page {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+.main-navigation {
+  grid-row: 2;
+  box-sizing: border-box;
+}
+.main-tabs-page > .tabs {
+  grid-row: 3;
+  min-height: 0;
+  min-width: 0;
+}
+.main-tabs-page > .tabs > .page-content {
+  height: 100%;
+  padding: 0;
+  margin-left: var(--f7-safe-area-left);
+  margin-right: var(--f7-safe-area-right);
+}
