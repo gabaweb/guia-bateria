@@ -23,9 +23,16 @@ export async function offlineServer(swRevision?: () => number) {
         mime[extname(file)] || "application/octet-stream",
       );
       const content = await readFile(file);
-      res.end(path === "/sw.js" && swRevision
-        ? Buffer.concat([content, Buffer.from(`\n// Test release ${swRevision()}\n`)])
-        : content);
+      // Stamp the release on the worker and on the HTML shell so tests can
+      // tell which version a reload actually rendered.
+      const stamp = swRevision
+        ? path === "/sw.js"
+          ? `\n// Test release ${swRevision()}\n`
+          : path === "/"
+            ? `\n<meta name="test-release" content="${swRevision()}">\n`
+            : ""
+        : "";
+      res.end(stamp ? Buffer.concat([content, Buffer.from(stamp)]) : content);
     } catch {
       res.writeHead(404);
       res.end();

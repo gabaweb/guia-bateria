@@ -498,6 +498,18 @@ test("atualização da PWA é automática, sem popup, e mantém o progresso", as
       .click();
     await expect(current(page)).toHaveAttribute("data-name", "home");
     revision = 2;
+    // A plain reload while online already renders the new release: the HTML
+    // shell is fetched network-first instead of served from the old cache.
+    await page.reload();
+    expect(
+      await page.evaluate(
+        () => document.querySelector<HTMLMetaElement>('meta[name="test-release"]')?.content,
+      ),
+    ).toBe("2");
+    await expect(
+      current(page).locator('[data-tip="sugestoes"].status-completed .status-marker'),
+    ).toBeVisible();
+    revision = 3;
     const reloaded = page.waitForEvent("load");
     await page.evaluate(() => {
       void navigator.serviceWorker.ready.then((registration) => registration.update());

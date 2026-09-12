@@ -14,7 +14,7 @@ O projeto é independente e não possui afiliação com a Apple.
 - Caminhos e instruções adaptados ao aparelho selecionado.
 - Estados **Pendente**, **Concluída** e **Para depois**, com progresso independente por modelo.
 - Persistência local, sem conta, envio de progresso ou serviço externo para consultar as dicas.
-- PWA instalável, com cache offline e atualização automática.
+- PWA instalável. Ao recarregar com internet, a versão mais recente é carregada na hora; sem internet, o guia abre a partir do cache.
 - Interface Framework7 com tema iOS 26: títulos grandes, barras translúcidas, barra de abas flutuante e medidor circular de progresso.
 - Links para o Manual de Uso do iPhone e o Suporte da Apple em português do Brasil.
 

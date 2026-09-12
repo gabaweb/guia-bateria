@@ -41,9 +41,25 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,png,svg,woff2}"],
-        navigateFallback: "index.html",
+        // Hashed assets are precached. The HTML shell is not: navigations go
+        // to the network first so a reload always shows the latest release,
+        // and fall back to the last cached shell only when offline.
+        globPatterns: ["**/*.{js,css,png,svg,woff2}"],
+        globIgnores: ["**/index.html"],
+        navigateFallback: null,
         cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            urlPattern: ({ request, url }) =>
+              request.mode === "navigate" || url.pathname === "/",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "guia-bateria-shell",
+              networkTimeoutSeconds: 4,
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
       },
     }),
   ],

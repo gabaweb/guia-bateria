@@ -19,7 +19,18 @@ function usePwaState() {
     let active = true;
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.ready.then(() => {
-        if (active) setReady(true);
+        if (!active) return;
+        setReady(true);
+        // The first visit is not controlled by the worker, so warm the shell
+        // cache once it is. Later navigations refresh it network-first.
+        if (navigator.serviceWorker.controller)
+          fetch("/", { cache: "no-store" }).catch(() => undefined);
+        else
+          navigator.serviceWorker.addEventListener(
+            "controllerchange",
+            () => fetch("/", { cache: "no-store" }).catch(() => undefined),
+            { once: true },
+          );
       });
     const offline = () => setOnline(false);
     const online = () => setOnline(true);
