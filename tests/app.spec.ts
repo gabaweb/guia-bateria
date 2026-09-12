@@ -399,10 +399,15 @@ test("o conteúdo rola sob as barras e nada fica escondido atrás delas", async 
             const side = parseFloat(
               getComputedStyle(e.closest(".view")!).getPropertyValue("--f7-safe-area-left"),
             );
+            const rootStyle = getComputedStyle(document.documentElement);
+            const safeTop = parseFloat(rootStyle.getPropertyValue("--f7-safe-area-top"));
+            const safeBottom = parseFloat(rootStyle.getPropertyValue("--f7-safe-area-bottom"));
             return {
+              // The scroller is inset by the vertical safe areas so the scroll
+              // indicator never runs into the rounded corners.
               fills:
-                Math.round(rect.top) === 0 &&
-                Math.round(rect.bottom) === innerHeight &&
+                Math.round(rect.top) === safeTop &&
+                Math.round(rect.bottom) === innerHeight - safeBottom &&
                 Math.round(rect.left) === 0 &&
                 Math.round(innerWidth - rect.right) === 0,
               clearOfNavbar: main.getBoundingClientRect().top >= barBottom - 1,
