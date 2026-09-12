@@ -5,17 +5,19 @@ import Framework7React, { App, View } from "framework7-react";
 import Dialog from "framework7/components/dialog";
 import Progressbar from "framework7/components/progressbar";
 import Tabs from "framework7/components/tabs";
-import { MainTabs } from "./MainTabs";
-import "framework7/components/tabs/css";
+import Gauge from "framework7/components/gauge";
 import Radio from "framework7/components/radio";
 import "framework7/css";
 import "framework7/components/dialog/css";
 import "framework7/components/radio/css";
 import "framework7/components/progressbar/css";
+import "framework7/components/tabs/css";
+import "framework7/components/gauge/css";
 import "framework7/components/grid/css";
 import "framework7/components/typography/css";
-import "./styles.css";
 import "framework7-icons/css/framework7-icons.css";
+import "./styles.css";
+import { MainTabs } from "./MainTabs";
 import { GuideProvider, useGuide } from "./state";
 import { PwaProvider } from "./pwa";
 import { Home } from "./Home";
@@ -24,7 +26,7 @@ import { ModelPicker } from "./ModelPicker";
 import { Detail } from "./Detail";
 import { Progress } from "./Progress";
 import { About } from "./About";
-Framework7.use([Dialog, Radio, Progressbar, Tabs, Framework7React]);
+Framework7.use([Dialog, Radio, Progressbar, Tabs, Gauge, Framework7React]);
 const routes = [
   {
     path: "/",
@@ -60,6 +62,7 @@ function GuideView() {
       browserHistoryRoot="/"
       browserHistoryInitialMatch
       browserHistoryAnimate={false}
+      iosSwipeBack
     />
   );
 }
@@ -79,8 +82,9 @@ ReactDOM.createRoot(document.getElementById("app")!).render(
         orange: "#ff9f0a",
         pink: "#ff375f",
         purple: "#bf5af2",
+        yellow: "#ffd60a",
       }}
-      navbar={{ iosCenterTitle: true }}
+      navbar={{ iosCenterTitle: true, snapPageScrollToLargeTitle: true }}
       dialog={{ buttonOk: "Limpar", buttonCancel: "Cancelar" }}
     >
       <PwaProvider>

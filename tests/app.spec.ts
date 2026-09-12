@@ -206,9 +206,12 @@ test("layout sem transbordamento em celular estreito, iPhone e desktop", async (
     await expect(current(page).locator(".filter-control, .category-filter")).toHaveCount(0);
     expect(
       await current(page)
-        .locator(".main-navigation .button")
+        .locator(".main-navigation .tab-link")
         .evaluateAll((buttons) =>
-          buttons.every((button) => button.scrollWidth <= button.clientWidth),
+          buttons.every(
+            (button) =>
+              button.scrollWidth <= Math.ceil(button.getBoundingClientRect().width),
+          ),
         ),
     ).toBe(true);
     await page.evaluate(() => document.fonts.ready);
@@ -353,7 +356,7 @@ test("Para depois é exclusivo, persiste por modelo e soma no progresso", async 
   ).toBeDisabled();
 });
 
-test("a área de rolagem fica entre as áreas seguras, Navbar e ações", async ({
+test("o conteúdo rola sob as barras e nada fica escondido atrás delas", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -368,14 +371,8 @@ test("a área de rolagem fica entre as áreas seguras, Navbar e ações", async 
     await page.goto("/");
     // Simulate env() values; WebKit desktop cannot reproduce physical iOS chrome.
     await page.evaluate(({ top, bottom, side }) => {
-      document.documentElement.style.setProperty(
-        "--f7-safe-area-top",
-        `${top}px`,
-      );
-      document.documentElement.style.setProperty(
-        "--f7-safe-area-bottom",
-        `${bottom}px`,
-      );
+      document.documentElement.style.setProperty("--f7-safe-area-top", `${top}px`);
+      document.documentElement.style.setProperty("--f7-safe-area-bottom", `${bottom}px`);
       const view = document.querySelector<HTMLElement>(".view")!;
       view.style.setProperty("--f7-safe-area-left", `${side}px`);
       view.style.setProperty("--f7-safe-area-right", `${side}px`);
@@ -383,90 +380,67 @@ test("a área de rolagem fica entre as áreas seguras, Navbar e ações", async 
     const check = async () => {
       const scroll = current(page).locator(".page-content:visible");
       await scroll.evaluate((e) => (e.scrollTop = 0));
+      // Framework7 layout: the scrollport fills the page, the fixed bars float
+      // above it and the padding keeps the first and last rows clear of them.
       await expect
-        .poll(async () =>
-          current(page)
-            .evaluate((e) => {
-              const content = e.querySelector(
-                ".page-content.tab-active, .page-content:not(.tab)",
-              )!;
-              const r = content.getBoundingClientRect();
-              const navbar = (
-                e.querySelector(".main-navigation") ||
-                e.querySelector(".navbar")
-              )?.getBoundingClientRect();
-              const footer = e
-                .querySelector(".page-actions")
-                ?.getBoundingClientRect();
-              const view = e.closest(".view")!;
-              return {
-                top: Math.round(r.top),
-                bottom: Math.round(r.bottom),
-                expectedTop: Math.round(
-                  (navbar
-                    ? navbar.bottom +
-                      (e.querySelector(".main-navigation")
-                        ? parseFloat(
-                            getComputedStyle(
-                              e.querySelector(".main-navigation")!,
-                            ).marginBottom,
-                          )
-                        : 0)
-                    : undefined) ??
-                    parseFloat(
-                      getComputedStyle(
-                        document.documentElement,
-                      ).getPropertyValue("--f7-safe-area-top"),
-                    ),
-                ),
-                expectedBottom: Math.round(
-                  footer?.top ??
-                    innerHeight -
-                      parseFloat(
-                        getComputedStyle(
-                          document.documentElement,
-                        ).getPropertyValue("--f7-safe-area-bottom"),
-                      ),
-                ),
-                left: Math.round(r.left),
-                right: Math.round(innerWidth - r.right),
-                side: parseFloat(
-                  getComputedStyle(view).getPropertyValue(
-                    "--f7-safe-area-left",
-                  ),
-                ),
-                padding: getComputedStyle(content).padding,
-                footerBottom: Math.round(footer?.bottom ?? r.bottom),
-                safeBottom: Math.round(
-                  innerHeight -
-                    parseFloat(
-                      getComputedStyle(
-                        document.documentElement,
-                      ).getPropertyValue("--f7-safe-area-bottom"),
-                    ),
-                ),
-              };
-            })
-            .then(
-              (m) =>
-                m.top === m.expectedTop &&
-                m.bottom === m.expectedBottom &&
-                m.left === m.side &&
-                m.right === m.side &&
-                m.padding === "0px" &&
-                m.footerBottom === m.safeBottom,
-            ),
+        .poll(() =>
+          current(page).evaluate((e) => {
+            const content = e.querySelector<HTMLElement>(
+              ".page-content.tab-active, .page-content:not(.tab)",
+            )!;
+            const main = content.querySelector(".content-wrap")!;
+            const navbar = e.querySelector(".navbar")!;
+            const titleLarge = navbar.querySelector(".title-large");
+            const rect = content.getBoundingClientRect();
+            const barBottom = Math.max(
+              navbar.getBoundingClientRect().bottom,
+              titleLarge?.getBoundingClientRect().bottom ?? 0,
+            );
+            const side = parseFloat(
+              getComputedStyle(e.closest(".view")!).getPropertyValue("--f7-safe-area-left"),
+            );
+            return {
+              fills:
+                Math.round(rect.top) === 0 &&
+                Math.round(rect.bottom) === innerHeight &&
+                Math.round(rect.left) === 0 &&
+                Math.round(innerWidth - rect.right) === 0,
+              clearOfNavbar: main.getBoundingClientRect().top >= barBottom - 1,
+              clearOfSides:
+                main.getBoundingClientRect().left >= side &&
+                innerWidth - main.getBoundingClientRect().right >= side,
+            };
+          }),
         )
-        .toBe(true);
+        .toEqual({ fills: true, clearOfNavbar: true, clearOfSides: true });
       await scroll.evaluate((e) => (e.scrollTop = e.scrollHeight));
       expect(
-        await scroll.evaluate(
-          (e) => Math.abs(e.scrollHeight - e.clientHeight - e.scrollTop) < 2,
-        ),
-      ).toBe(true);
-      expect(
-        await page.evaluate(() => document.scrollingElement!.scrollTop),
-      ).toBe(0);
+        await current(page).evaluate((e) => {
+          const content = e.querySelector<HTMLElement>(
+            ".page-content.tab-active, .page-content:not(.tab)",
+          )!;
+          const main = content.querySelector(".content-wrap")!;
+          const toolbar = e.querySelector(".toolbar")!;
+          const safeBottom = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--f7-safe-area-bottom"),
+          );
+          const toolbarRect = toolbar.getBoundingClientRect();
+          return {
+            atEnd: Math.abs(content.scrollHeight - content.clientHeight - content.scrollTop) < 2,
+            clearOfToolbar: main.getBoundingClientRect().bottom <= toolbarRect.top + 1,
+            toolbarAboveSafeArea: Math.round(toolbarRect.bottom) === innerHeight,
+            toolbarInnerAboveSafeArea:
+              toolbar.querySelector(".toolbar-inner")!.getBoundingClientRect().bottom <=
+              innerHeight - safeBottom + 1,
+          };
+        }),
+      ).toEqual({
+        atEnd: true,
+        clearOfToolbar: true,
+        toolbarAboveSafeArea: true,
+        toolbarInnerAboveSafeArea: true,
+      });
+      expect(await page.evaluate(() => document.scrollingElement!.scrollTop)).toBe(0);
       expect(
         await page
           .locator(".framework7-root")
@@ -479,9 +453,7 @@ test("a área de rolagem fica entre as áreas seguras, Navbar e ações", async 
       ["Sobre", "about"],
       ["Guia", "home"],
     ]) {
-      await current(page)
-        .getByRole("link", { name: label, exact: true })
-        .click();
+      await current(page).getByRole("link", { name: label, exact: true }).click();
       await expect(current(page)).toHaveAttribute("data-name", name);
       await check();
     }
@@ -489,8 +461,9 @@ test("a área de rolagem fica entre as áreas seguras, Navbar e ações", async 
     await expect(current(page)).toHaveAttribute("data-name", "tip-sugestoes");
     await check();
     await expect(current(page).locator(".review-explanation")).toBeInViewport();
+    await expect(current(page).getByRole("button", { name: "Concluir" })).toBeInViewport();
     await expect(
-      current(page).getByRole("button", { name: "Concluir" }),
+      current(page).getByRole("button", { name: "Deixar para depois" }),
     ).toBeInViewport();
     await page.getByRole("link", { name: "Voltar", exact: true }).click();
     await current(page).locator(".model-selector a").click();
@@ -656,8 +629,13 @@ test("ações salvam uma vez e retornam inclusive na última dica e em links dir
     await current(page).locator('[data-tip="carregamento"] a').click();
     const actions = current(page).locator(".detail-action button");
     await expect(actions).toHaveText(["Concluir", "Deixar para depois"]);
-    expect(await actions.evaluateAll(elements => elements.map(el => getComputedStyle(el).backgroundColor)))
-      .toEqual(["rgb(48, 209, 88)", "rgb(255, 159, 10)"]);
+    expect(await actions.evaluateAll(elements => elements.map(el => {
+      const style = getComputedStyle(el);
+      return { background: style.backgroundColor, color: style.color };
+    }))).toEqual([
+      { background: "rgb(48, 209, 88)", color: "rgb(0, 0, 0)" },
+      { background: "rgba(0, 0, 0, 0)", color: "rgb(255, 159, 10)" },
+    ]);
     await current(page).getByRole("button", { name: label, exact: true }).evaluate(el => {
       (el as HTMLButtonElement).click();
       (el as HTMLButtonElement).click();

@@ -1,18 +1,6 @@
-/* Settings-style tiles use the native Icon and Framework7 color utilities. */
-.icon.settings-icon {
-  box-sizing: content-box;
-  padding: 5px;
-  border-radius: 7px;
-}
-/* Override Framework7's i.icon background sizing; this glyph needs an optical inset. */
-.settings-icon.icon-accessibility {
-  background-image: url("./assets/accessibility.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 18px 18px;
-}
-/* Framework7 owns all component styling. Only the app frame is constrained here.
-   Keep the actual scrollport inside the iOS safe area, not merely its content. */
+/* Framework7 owns the layout: fixed Navbar and Toolbar with the page content
+   scrolling underneath, exactly like its iOS examples. Only the app frame,
+   the settings-style icon tiles and a few composed blocks are styled here. */
 html,
 body,
 #app {
@@ -20,24 +8,12 @@ body,
   height: 100%;
   margin: 0;
 }
-.guide-page {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  padding-bottom: var(--f7-safe-area-bottom);
+:root {
+  --guide-tint-green: rgba(48, 209, 88, 0.16);
+  --guide-tint-orange: rgba(255, 159, 10, 0.16);
+  --guide-tint-gray: rgba(142, 142, 147, 0.18);
 }
-.guide-page > .navbar {
-  position: relative;
-  grid-row: 1;
-}
-.guide-page > .page-content {
-  grid-row: 2;
-  min-height: 0;
-  min-width: 0;
-  height: auto;
-  padding: 0;
-  margin-left: var(--f7-safe-area-left);
-  margin-right: var(--f7-safe-area-right);
-}
+/* Wide screens keep the content, the bar contents and the tab bar aligned. */
 .content-wrap {
   --f7-block-title-white-space: normal;
   --f7-list-item-title-white-space: normal;
@@ -46,26 +22,63 @@ body,
   --f7-safe-area-right: 0px;
   width: min(100%, 720px);
   margin-inline: auto;
+  padding-bottom: 8px;
+}
+.guide-page .navbar-inner,
+.guide-page .toolbar-inner {
+  max-width: 720px;
+  inset-inline: 0;
+  margin-inline: auto;
+}
+.guide-page .page-content {
+  --f7-page-content-extra-padding-bottom: 12px;
+  /* Rows change height when a status chip appears; keep the scroll offset
+     the user left instead of letting browser scroll anchoring shift it. */
+  overflow-anchor: none;
+}
+.page-description {
+  --f7-block-font-size: 15px;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+  line-height: 1.45;
+}
+.subpage .page-content .block-title-large:first-child {
+  margin-top: 8px;
+}
+/* Settings-style tiles use the native Icon and Framework7 color utilities. */
+.icon.settings-icon {
+  box-sizing: content-box;
+  padding: 5px;
+  border-radius: 7px;
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+}
+/* Override Framework7's i.icon background sizing; this glyph needs an optical inset. */
+.settings-icon.icon-accessibility {
+  background-image: url("./assets/accessibility.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+}
+.icon.settings-icon-hero {
+  padding: 16px;
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.18),
+    0 12px 32px rgba(0, 0, 0, 0.35);
+}
+.settings-icon-hero.icon-accessibility {
+  background-size: 36px 36px;
 }
 /* Use Framework7 typography tokens while allowing long Settings paths to wrap. */
 .settings-path {
   --f7-block-font-size: 17px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
-.page-actions {
-  grid-row: 3;
-  min-width: 0;
-  margin-left: var(--f7-safe-area-left);
-  margin-right: var(--f7-safe-area-right);
-}
-.page-actions > .content-wrap {
-  box-sizing: border-box;
-  padding: 8px 16px;
-}
-.guide-page > .navbar .navbar-inner {
-  max-width: 720px;
-  inset-inline: 0;
-  margin-inline: auto;
+.settings-path strong {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
 }
 /* Text alternatives for live status without duplicating visual content. */
 .visually-hidden {
@@ -75,23 +88,288 @@ body,
   overflow: hidden;
   clip-path: inset(50%);
 }
-
-/* Native scrollable tabs keep their DOM and independent scroll positions. */
-.main-tabs-page {
-  grid-template-rows: auto auto minmax(0, 1fr);
+/* Progress summary: Framework7 Gauge beside the counts. */
+.progress-summary {
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
-.main-navigation {
-  grid-row: 2;
-  box-sizing: border-box;
+.progress-summary-large {
+  flex-direction: column;
+  text-align: center;
+  gap: 8px;
+  padding-top: 24px;
 }
-.main-tabs-page > .tabs {
-  grid-row: 3;
-  min-height: 0;
+.progress-gauge {
+  flex-shrink: 0;
+  display: flex;
+}
+.progress-summary-text {
+  min-width: 0;
+  flex: 1;
+}
+.progress-summary-text p {
+  margin: 0;
+}
+.progress-summary-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.progress-summary-caption {
+  font-size: 14px;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+  margin-top: 2px;
+}
+.progress-legend {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.progress-summary-large .progress-legend {
+  justify-content: center;
+}
+.progress-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.progress-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.progress-legend-completed {
+  color: var(--f7-color-green);
+}
+.progress-legend-later {
+  color: var(--f7-color-orange);
+}
+/* Stat tiles on the Progress tab. */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 14px 14px 12px;
+  border-radius: 18px;
+  background: var(--f7-block-strong-bg-color);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.06);
   min-width: 0;
 }
-.main-tabs-page > .tabs > .page-content {
-  height: 100%;
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+}
+.stat-completed .stat-value {
+  color: var(--f7-color-green);
+}
+.stat-later .stat-value {
+  color: var(--f7-color-orange);
+}
+.category-list .item-footer {
+  margin-top: 6px;
+}
+.category-progress {
+  --f7-progressbar-height: 4px;
+  --f7-progressbar-border-radius: 4px;
+  --f7-progressbar-bg-color: rgba(255, 255, 255, 0.1);
+}
+.progress-actions {
+  margin-top: 28px;
+  margin-bottom: 8px;
+}
+/* Status chips shared by list rows and the tip header. */
+.status-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  background: var(--guide-tint-gray);
+}
+.status-marker.completed {
+  background: var(--guide-tint-green);
+}
+.status-marker.later {
+  background: var(--guide-tint-orange);
+}
+.tip-list .item-subtitle {
+  line-height: 1;
+}
+.tip-list .status-completed .item-title {
+  color: var(--f7-list-item-subtitle-text-color, rgba(255, 255, 255, 0.55));
+}
+/* Tip header: hero icon, category, title and subtitle centered like iOS
+   feature intro screens. */
+.tip-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 12px 32px 4px;
+}
+.tip-hero-category {
+  margin: 20px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+}
+.tip-hero-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.tip-hero-subtitle {
+  margin: 8px 0 0;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+}
+.tip-hero .detail-status {
+  margin-top: 14px;
+}
+.tip-description {
+  --f7-block-font-size: 17px;
+  line-height: 1.5;
+}
+.tip-note {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.tip-note p {
+  margin: 0;
+  line-height: 1.5;
+}
+.notice {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.notice p {
+  margin: 4px 0 0;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+}
+/* External links show the outward arrow instead of the disclosure chevron. */
+.item-link[target="_blank"] .item-inner::before {
+  display: none;
+}
+.item-link[target="_blank"] .item-after .icon {
+  margin-left: 4px;
+}
+/* Bottom action toolbar: stacked pill buttons above the safe area, with a
+   denser fade than the tab bar so the text action stays legible. */
+.page-actions {
+  --f7-toolbar-bg-color: rgba(0, 0, 0, 0.92);
+}
+.ios .page-actions::before {
+  top: -32px;
+}
+.ios .page-actions::after {
+  top: -32px;
+  background-image: linear-gradient(
+    to top,
+    var(--f7-toolbar-bg-color) calc(var(--f7-safe-area-bottom, 0px) + 45%),
+    transparent 100%
+  );
+}
+.page-actions .toolbar-inner {
+  display: block;
+  padding: 8px 16px 16px;
+}
+.page-actions-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(100%, 720px);
   padding: 0;
-  margin-left: var(--f7-safe-area-left);
-  margin-right: var(--f7-safe-area-right);
+}
+.detail-action {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.detail-action .button .icon {
+  margin-right: 6px;
+}
+.detail-action .button:not(.button-fill) {
+  --f7-button-large-height: 44px;
+  font-weight: 500;
+}
+.page-actions .button-fill {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+/* Composed blocks on About */
+.info-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.info-panel-heading .block-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.info-panel p:last-child {
+  margin-bottom: 0;
+}
+.page-footnote {
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+  margin-top: 8px;
+}
+/* Empty state for unavailable tips */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+.empty-state .block-title {
+  margin: 0;
+}
+.empty-state p {
+  margin: 0;
+  color: var(--f7-block-header-text-color, rgba(255, 255, 255, 0.55));
+}
+.empty-state .button {
+  width: 100%;
+  margin-top: 8px;
+}
+/* Large navbar titles wrap on narrow phones instead of clipping. */
+.navbar .title-large-text {
+  white-space: normal;
 }

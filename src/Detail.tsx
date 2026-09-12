@@ -8,10 +8,11 @@ import {
   ListItem,
   Block,
   BlockTitle,
+  BlockFooter,
   Badge,
 } from "framework7-react";
 import { settingsIcons, tipStatusIndicators } from "./data/icons";
-import { tips } from "./data/tips";
+import { tips, categories } from "./data/tips";
 import { useGuide } from "./state";
 import { Shell } from "./components/Shell";
 // Editorial emphasis is rendered as text/strong elements, never injected HTML.
@@ -36,9 +37,13 @@ export function Path({ items }: { items: string[] }) {
           {index > 0 && (
             <>
               {" "}
-              <Icon f7="chevron_right" size={12} textColor="gray" aria-hidden="true" />
-              <span className="visually-hidden"> &gt; </span>
-              {" "}
+              <Icon
+                f7="chevron_right"
+                size={12}
+                textColor="gray"
+                aria-hidden="true"
+              />
+              <span className="visually-hidden"> &gt; </span>{" "}
             </>
           )}
           <strong>{item}</strong>
@@ -47,7 +52,13 @@ export function Path({ items }: { items: string[] }) {
     </Block>
   );
 }
-export function Detail({ id, f7router }: { id: string; f7router: Router.Router }) {
+export function Detail({
+  id,
+  f7router,
+}: {
+  id: string;
+  f7router: Router.Router;
+}) {
   const { model, available, statusOf, setStatus } = useGuide();
   const returning = useRef(false);
   const tip = tips.find((t) => t.id === id);
@@ -55,13 +66,19 @@ export function Detail({ id, f7router }: { id: string; f7router: Router.Router }
     return (
       <Shell name="unavailable" back title="Dica indisponível">
         <Block className="empty-state" strong inset>
+          <Icon
+            f7="exclamationmark_triangle_fill"
+            size={44}
+            textColor="orange"
+            aria-hidden="true"
+          />
           <BlockTitle large {...{ role: "heading" }} aria-level={1}>
             {tip
               ? "Essa dica não se aplica ao seu iPhone"
               : "Dica não encontrada"}
           </BlockTitle>
           <p>O guia mostra apenas os recursos compatíveis com {model.name}.</p>
-          <Button round fill href="/">
+          <Button round fill large href="/">
             Voltar ao guia
           </Button>
           <Link href="/aparelho/">Alterar iPhone</Link>
@@ -71,6 +88,7 @@ export function Detail({ id, f7router }: { id: string; f7router: Router.Router }
   const content = tip.content(model);
   const status = statusOf(id);
   const indicator = status === "pending" ? null : tipStatusIndicators[status];
+  const category = categories.find((c) => c.id === tip.category);
   const saveAndBack = (status: "completed" | "later") => {
     if (returning.current || !f7router.allowPageChange) return;
     returning.current = true;
@@ -86,9 +104,11 @@ export function Detail({ id, f7router }: { id: string; f7router: Router.Router }
     <Shell
       name={`tip-${id}`}
       back
-      title="Guia Bateria"
+      transparent
+      title={tip.title}
+      footerHeight={122}
       footer={
-        <Block className="detail-action no-margin no-padding">
+        <div className="detail-action">
           <Button
             round
             type="button"
@@ -103,51 +123,39 @@ export function Detail({ id, f7router }: { id: string; f7router: Router.Router }
           <Button
             round
             type="button"
-            fill
             large
             color="orange"
-            textColor="black"
-            className="margin-top-half"
             onClick={() => saveAndBack("later")}
           >
             Deixar para depois
           </Button>
-        </Block>
+        </div>
       }
     >
-      <BlockTitle
-        large
-        className="tip-heading display-flex align-items-center"
-        {...{ role: "heading" }}
-        aria-level={1}
-      >
+      <header className="tip-hero">
         <Icon
           {...settingsIcons[tip.icon]}
-          className="settings-icon margin-right flex-shrink-0"
+          className="settings-icon settings-icon-hero"
           textColor="white"
-          size={20}
+          size={40}
           aria-hidden="true"
         />
-        <span>{tip.title}</span>
-      </BlockTitle>
-      <Block>
-        {tip.subtitle}
+        {category && <p className="tip-hero-category">{category.name}</p>}
+        <h1 className="tip-hero-title">{tip.title}</h1>
+        <p className="tip-hero-subtitle">{tip.subtitle}</p>
         {indicator && (
           <p
-            className={`detail-status no-margin-bottom display-flex align-items-center text-color-${indicator.color}`}
+            className={`status-marker ${status} detail-status text-color-${indicator.color}`}
           >
-            <Icon
-              f7={indicator.f7}
-              size={18}
-              className="margin-right-half"
-              aria-hidden="true"
-            />
+            <Icon f7={indicator.f7} size={16} aria-hidden="true" />
             {indicator.label}
           </p>
         )}
-      </Block>
-      <Block>{tip.description}</Block>
-      <BlockTitle {...{ role: "heading" }} aria-level={2}>Caminho</BlockTitle>
+      </header>
+      <Block className="tip-description">{tip.description}</Block>
+      <BlockTitle {...{ role: "heading" }} aria-level={2}>
+        Caminho
+      </BlockTitle>
       <Path items={content.path} />
       <BlockTitle {...{ role: "heading" }} aria-level={2}>
         Como fazer
@@ -162,16 +170,23 @@ export function Detail({ id, f7router }: { id: string; f7router: Router.Router }
       </List>
       {content.extra && (
         <>
-          <BlockTitle>{content.extra.title}</BlockTitle>
+          <BlockTitle {...{ role: "heading" }} aria-level={2}>
+            {content.extra.title}
+          </BlockTitle>
           <Path items={content.extra.path} />
-          <Block>{emphasize(content.extra.text)}</Block>
+          <BlockFooter>{emphasize(content.extra.text)}</BlockFooter>
         </>
       )}
-      <BlockTitle>O que muda na prática</BlockTitle>
-      <Block strong inset>
-        {content.note}
+      <BlockTitle {...{ role: "heading" }} aria-level={2}>
+        O que muda na prática
+      </BlockTitle>
+      <Block strong inset className="tip-note">
+        <Icon f7="lightbulb_fill" size={20} textColor="yellow" aria-hidden="true" />
+        <p>{content.note}</p>
       </Block>
-      <BlockTitle>Saiba mais na Apple</BlockTitle>
+      <BlockTitle {...{ role: "heading" }} aria-level={2}>
+        Saiba mais na Apple
+      </BlockTitle>
       <List inset strong dividers>
         {tip.sources.map((source) => (
           <ListItem
@@ -181,13 +196,21 @@ export function Detail({ id, f7router }: { id: string; f7router: Router.Router }
             external
             target="_blank"
             {...{ rel: "noopener noreferrer" }}
-          />
+          >
+            <Icon
+              slot="after"
+              f7="arrow_up_right_square"
+              size={18}
+              textColor="gray"
+              aria-hidden="true"
+            />
+          </ListItem>
         ))}
       </List>
-      <Block className="review-explanation">
-        As duas ações salvam sua escolha e voltam à tela de onde você abriu a dica.
-        Você decide quais ajustes fazem sentido para sua rotina.
-      </Block>
+      <BlockFooter className="review-explanation">
+        As duas ações salvam sua escolha e voltam à tela de onde você abriu a
+        dica. Você decide quais ajustes fazem sentido para sua rotina.
+      </BlockFooter>
     </Shell>
   );
 }

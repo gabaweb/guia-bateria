@@ -40,15 +40,10 @@ export function TipList({ items }: { items: Tip[] }) {
                       {indicator && (
                         <span
                           slot="subtitle"
-                          className={`status-marker ${status} display-flex align-items-center text-color-${indicator.color}`}
+                          className={`status-marker ${status} text-color-${indicator.color}`}
                           aria-label={indicator.label}
                         >
-                          <Icon
-                            f7={indicator.f7}
-                            size={18}
-                            className="margin-right-half"
-                            aria-hidden="true"
-                          />
+                          <Icon f7={indicator.f7} size={16} aria-hidden="true" />
                           {indicator.label}
                         </span>
                       )}

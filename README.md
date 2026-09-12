@@ -15,7 +15,7 @@ O projeto é independente e não possui afiliação com a Apple.
 - Estados **Pendente**, **Concluída** e **Para depois**, com progresso independente por modelo.
 - Persistência local, sem conta, envio de progresso ou serviço externo para consultar as dicas.
 - PWA instalável, com cache offline e atualização automática.
-- Interface Framework7 com tema iOS e aparência escura.
+- Interface Framework7 com tema iOS 26: títulos grandes, barras translúcidas, barra de abas flutuante e medidor circular de progresso.
 - Links para o Manual de Uso do iPhone e o Suporte da Apple em português do Brasil.
 
 ## Tecnologias
@@ -27,7 +27,7 @@ O projeto é independente e não possui afiliação com a Apple.
 - vite-plugin-pwa e Workbox
 - Playwright
 
-O Framework7 e seus ícones são dependências locais. A interface usa os componentes do framework, incluindo `Page`, `PageContent`, `Navbar`, `Block`, `List`, `ListItem`, `Button`, `Segmented`, `Progressbar`, `Icon`, `Tabs` e `Dialog`.
+O Framework7 e seus ícones são dependências locais. A interface segue o layout padrão do framework, com `Navbar` e `Toolbar` fixas e o conteúdo rolando por baixo delas, e usa os componentes `Page`, `PageContent`, `Navbar`, `Toolbar` (tabbar), `Block`, `List`, `ListItem`, `Button`, `Gauge`, `Progressbar`, `Icon`, `Tabs` e `Dialog`.
 
 ## Executar localmente
 
