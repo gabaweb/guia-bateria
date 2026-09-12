@@ -362,40 +362,46 @@ body,
   width: 100%;
   margin-top: 8px;
 }
-/* Tab pages have no navbar pills, so the small bar is shorter and the large
-   title sits where iOS puts it. Subpages keep the 64px bar for the back pill. */
+/* Tab pages: only the large title, no small collapsed title and no bar
+   backdrop. The title scrolls away with the content like iOS 26. */
 .main-tabs-page {
-  --f7-navbar-height: 48px;
+  --f7-navbar-height: 44px;
   --f7-navbar-large-title-padding-vertical: 2px;
   --f7-tabbar-icons-height: calc(64px + var(--guide-tabbar-gap));
-  --guide-tabbar-gap: max(6px, calc(18px - var(--f7-safe-area-bottom) / 2));
+  --guide-tabbar-gap: max(8px, calc(var(--guide-safe-bottom) * 0.6));
+}
+.main-tabs-page .navbar .navbar-bg,
+.main-tabs-page .navbar .title {
+  display: none;
 }
 .ios .main-tabs-page .navbar-inner {
-  padding-top: calc(6px + var(--f7-safe-area-top));
-  padding-bottom: 6px;
+  padding-top: calc(4px + var(--f7-safe-area-top));
+  padding-bottom: 4px;
 }
-/* The floating tab bar hugs the home indicator instead of hovering above it. */
+/* No blur behind any bar; subpage bars keep only their plain fade. */
+.ios .navbar-bg::before,
+.ios .toolbar::before {
+  display: none;
+}
+/* Floating tab bar: no backdrop band, content shows through, and the pill
+   sits down by the home indicator (inside the safe area) as in iOS 26. */
+.ios .main-navigation::before,
+.ios .main-navigation::after {
+  display: none;
+}
+.main-navigation {
+  --f7-safe-area-bottom: 0px;
+}
 .ios .main-navigation.toolbar-bottom .toolbar-inner {
   padding-bottom: var(--guide-tabbar-gap);
 }
-/* The scroller stays inside the vertical safe areas so its scroll indicator
-   stops before the iPhone's rounded corners. The bars still float over it and
-   paint the status bar and home indicator regions themselves. */
 .guide-page {
-  --guide-safe-top: var(--f7-safe-area-top);
   --guide-safe-bottom: var(--f7-safe-area-bottom);
 }
-.guide-page .page-content {
-  --f7-safe-area-top: 0px;
+/* The tab bar already accounts for the safe area, so the scroller's bottom
+   padding must not add it again. */
+.main-tabs-page .page-content {
   --f7-safe-area-bottom: 0px;
-  --f7-page-navbar-offset: var(--f7-navbar-height);
-  margin-top: var(--guide-safe-top);
-  height: calc(100% - var(--guide-safe-top) - var(--guide-safe-bottom));
-}
-.guide-page.page-with-navbar-large .page-content {
-  --f7-page-navbar-offset: calc(
-    var(--f7-navbar-height) + var(--f7-navbar-large-title-height)
-  );
 }
 /* Large navbar titles wrap on narrow phones instead of clipping. */
 .navbar .title-large-text {

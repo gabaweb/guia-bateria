@@ -399,15 +399,10 @@ test("o conteúdo rola sob as barras e nada fica escondido atrás delas", async 
             const side = parseFloat(
               getComputedStyle(e.closest(".view")!).getPropertyValue("--f7-safe-area-left"),
             );
-            const rootStyle = getComputedStyle(document.documentElement);
-            const safeTop = parseFloat(rootStyle.getPropertyValue("--f7-safe-area-top"));
-            const safeBottom = parseFloat(rootStyle.getPropertyValue("--f7-safe-area-bottom"));
             return {
-              // The scroller is inset by the vertical safe areas so the scroll
-              // indicator never runs into the rounded corners.
               fills:
-                Math.round(rect.top) === safeTop &&
-                Math.round(rect.bottom) === innerHeight - safeBottom &&
+                Math.round(rect.top) === 0 &&
+                Math.round(rect.bottom) === innerHeight &&
                 Math.round(rect.left) === 0 &&
                 Math.round(innerWidth - rect.right) === 0,
               clearOfNavbar: main.getBoundingClientRect().top >= barBottom - 1,
@@ -426,24 +421,21 @@ test("o conteúdo rola sob as barras e nada fica escondido atrás delas", async 
           )!;
           const main = content.querySelector(".content-wrap")!;
           const toolbar = e.querySelector(".toolbar")!;
-          const safeBottom = parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue("--f7-safe-area-bottom"),
-          );
           const toolbarRect = toolbar.getBoundingClientRect();
+          const pane = toolbar.querySelector(".toolbar-pane, .page-actions-inner")!;
           return {
             atEnd: Math.abs(content.scrollHeight - content.clientHeight - content.scrollTop) < 2,
             clearOfToolbar: main.getBoundingClientRect().bottom <= toolbarRect.top + 1,
-            toolbarAboveSafeArea: Math.round(toolbarRect.bottom) === innerHeight,
-            toolbarInnerAboveSafeArea:
-              toolbar.querySelector(".toolbar-inner")!.getBoundingClientRect().bottom <=
-              innerHeight - safeBottom + 1,
+            toolbarAtBottom: Math.round(toolbarRect.bottom) === innerHeight,
+            // The controls keep a gap from the screen edge (home indicator).
+            controlsAboveEdge: pane.getBoundingClientRect().bottom <= innerHeight - 8,
           };
         }),
       ).toEqual({
         atEnd: true,
         clearOfToolbar: true,
-        toolbarAboveSafeArea: true,
-        toolbarInnerAboveSafeArea: true,
+        toolbarAtBottom: true,
+        controlsAboveEdge: true,
       });
       expect(await page.evaluate(() => document.scrollingElement!.scrollTop)).toBe(0);
       expect(
